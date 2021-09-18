@@ -88,7 +88,7 @@ func main() {
 	}
 
     // get update flag
-    var overwriteFlag bool
+    var updateFlag bool
     update := githubactions.GetInput("update")
     if updateFlag == "" {
         githubactions.Warningf("Update is disabled.")
@@ -137,10 +137,11 @@ func main() {
     if updateFlag {
         fmt.Println("Updating file on drive: $s", name)
         // Query for all files in google drive directory with name = <name>
+        var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s'", name)
         filesQueryCallResult, err := svc.Files.List().Q(nameQuery).Do()
 
-        if len(filesQueryCallResult.Files == 0) {
+        if len(filesQueryCallResult.Files) == 0 {
             // Upload new file to google drive
             uploadNewFileToDrive(svc, filename, folderId, name)
         } else {
