@@ -24,7 +24,7 @@ const (
 	nameInput = "name"
 	folderIdInput = "folderId"
 	credentialsInput = "credentials"
-    update = "false"
+    updateInput = "update"
 )
 
 func uploadNewFileToDrive(svc *drive.Service, filename string, folderId string, name string) {
@@ -89,8 +89,8 @@ func main() {
 
     // get update flag
     var updateFlag bool
-    update := githubactions.GetInput("update")
-    if updateFlag == "" {
+    update := githubactions.GetInput(updateInput)
+    if update == "" {
         githubactions.Warningf("Update is disabled.")
         updateFlag = false
     } else {
