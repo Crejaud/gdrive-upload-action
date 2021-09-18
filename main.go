@@ -138,7 +138,7 @@ func main() {
         fmt.Println("Updating file on drive: %s", name)
         // Query for all files in google drive directory with name = <name>
         var nameQuery string
-        nameQuery = fmt.Sprintf("name = '%s' and trashed = false and size != 0", name)
+        nameQuery = fmt.Sprintf("name = '%s' and trashed = false and size != '0'", name)
         filesQueryCallResult, err := svc.Files.List().Q(nameQuery).Do()
 
         if err != nil {
