@@ -135,7 +135,7 @@ func main() {
 	}
 
     if updateFlag {
-        fmt.Println("Updating file on drive: $s", name)
+        fmt.Println("Updating file on drive: %s", name)
         // Query for all files in google drive directory with name = <name>
         var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s' and trashed = false", name)
@@ -152,7 +152,7 @@ func main() {
         } else {
             // Update file on google drive
             for _, driveFile := range filesQueryCallResult.Files {
-                fmt.Printf("Updating file; %s (%s) Trashed=$t\n", driveFile.Name, driveFile.Id, driveFile.Trashed)
+                fmt.Printf("Updating file; %s (%s) Trashed=%t\n", driveFile.Name, driveFile.Id, driveFile.Trashed, driveFile)
                 updateFileOnDrive(svc, filename, folderId, driveFile, name)
             }
         }
