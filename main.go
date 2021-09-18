@@ -152,7 +152,7 @@ func main() {
         } else {
             // Update file on google drive
             for _, driveFile := range filesQueryCallResult.Files {
-                fmt.Printf("Updating file; %s (%s)\n", driveFile.Name, driveFile.Id)
+                fmt.Printf("Updating file; %s (%s) Trashed=$t\n", driveFile.Name, driveFile.Id, driveFile.Trashed)
                 updateFileOnDrive(svc, filename, folderId, driveFile, name)
             }
         }
