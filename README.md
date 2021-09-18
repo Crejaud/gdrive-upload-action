@@ -34,6 +34,13 @@ Required: **YES**.
 
 A base64 encoded string with the [GSA credentials](https://stackoverflow.com/questions/46287267/how-can-i-get-the-file-service-account-json-for-google-translate-api/46290808).
 
+## ``update``
+Required: **NO**
+
+Updates the google drive file based on `name` (if exists), otherwise `filename`.
+
+Otherwise, a new file will be uploaded to google drive even if that filename exists already, creating 2 versions of the same file name.
+
 
 # Usage Example
 
@@ -66,4 +73,5 @@ jobs:
           name: "documentation.zip"
           folderId: ${{ secrets.folderId }}
           credentials: ${{ secrets.credentials }}
+          update: true
 ```

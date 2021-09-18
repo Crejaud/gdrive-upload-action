@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+    "strconv"
 	"strings"
 
 	"github.com/sethvargo/go-githubactions"
@@ -23,7 +24,45 @@ const (
 	nameInput = "name"
 	folderIdInput = "folderId"
 	credentialsInput = "credentials"
+    update = "false"
 )
+
+func uploadNewFileToDrive(svc *drive.Service, filename string, folderId string, name: string) {
+    file, err := os.Open(filename)
+    if err != nil {
+        githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
+    }
+
+    f := &drive.File {
+        Name: name,
+        Parents: []string{folderId},
+    }
+    _, err = svc.Files.Create(f).Media(file).Do()
+
+    if err != nil {
+        githubactions.Fatalf(fmt.Sprintf("Uploading new file failed with error: %v", err))
+    } else {
+        githubactions.Debugf("Uploaded new file successfully.")
+    }
+}
+
+func updateFileOnDrive(svc *drive.Service, filename string, folderId string, driveFile *drive.File, name: string) {
+    file, err := os.Open(filename)
+    if err != nil {
+        githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
+    }
+
+    f := &drive.File {
+        Name: name,
+    }
+    _, err = svc.Files.Update(driveFile.Id, f).Media(file).Do()
+
+    if err != nil {
+        githubactions.Fatalf(fmt.Sprintf("Updating file failed with error: %v", err))
+    } else {
+        githubactions.Debugf("Updated file successfully.")
+    }
+}
 
 func main() {
 
@@ -47,6 +86,17 @@ func main() {
 	if credentials == "" {
 		missingInput(credentialsInput)
 	}
+
+    // get update flag
+    var overwriteFlag bool
+    update := githubactions.GetInput("update")
+    if updateFlag == "" {
+        githubactions.Warningf("Update is disabled.")
+        updateFlag = false
+    } else {
+        updateFlag, _ = strconv.ParseBool(update)
+    }
+
 	// add base64 encoded credentials argument to mask
 	githubactions.AddMask(credentials)
 
@@ -84,15 +134,26 @@ func main() {
 		name = file.Name()
 	}
 
-	f := &drive.File{
-		Name:    name,
-		Parents: []string{folderId},
-	}
+    if updateFlag {
+        fmt.Println("Updating file on drive: $s", name)
+        // Query for all files in google drive directory with name = <name>
+        nameQuery = fmt.Sprintf("name = '%s'", name)
+        filesQueryCallResult, err := svc.Files.List().Q(nameQuery).Do()
 
-	_, err = svc.Files.Create(f).Media(file).Do()
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
-	}
+        if len(filesQueryCallResult.Files == 0) {
+            // Upload new file to google drive
+            uploadNewFileToDrive(svc, filename, folderId, name)
+        } else {
+            // Update file on google drive
+            for _, driveFile := range filesQueryCallResult.Files {
+                fmt.Printf("Updating file; %s (%s)\n", driveFile.Name, driveFile.Id)
+                updateFileOnDrive(svc, filename, folderId, driveFile, name)
+            }
+        }
+    } else {
+        fmt.Println("Uploading new file on drive: $s", name)
+        uploadNewFileToDrive(svc, filename, folderId, name)
+    }
 
 }
 
