@@ -151,7 +151,7 @@ func main() {
         // Update file on google drive
         for _, driveFile := range filesQueryCallResult.Files {
             fmt.Printf("Attempting Updating file; %s (%s) Trashed=%t Size=%d\n", driveFile.Name, driveFile.Id, driveFile.Trashed, driveFile.Size, driveFile)
-            if drive.Size != 0 {
+            if driveFile.Size != 0 {
                 fmt.Printf("Will update file: %s (%s)", driveFile.Name, driveFile.Id)
                 updateFileOnDrive(svc, filename, folderId, driveFile, name)
                 updatedFile = true
