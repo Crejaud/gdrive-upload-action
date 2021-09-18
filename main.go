@@ -139,7 +139,7 @@ func main() {
         // Query for all files in google drive directory with name = <name> & are not trashed
         var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s' and trashed = false", name)
-        filesQueryCallResult, err := svc.Files.List().Fields("files(trashed)").Q(nameQuery).Do()
+        filesQueryCallResult, err := svc.Files.List().Fields("files(name, id, trashed, size)").Q(nameQuery).Do()
 
         if err != nil {
 			log.Fatalf("Unable to retrieve files: %v", err)
