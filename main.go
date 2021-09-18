@@ -146,7 +146,7 @@ func main() {
 			fmt.Println("Unable to retrieve files")
 		}
 
-        if len(filesQueryCallResult) == 0 {
+        if len(filesQueryCallResult.Files) == 0 {
             fmt.Println("Uploading new file on drive: $s", name)
             uploadNewFileToDrive(svc, filename, folderId, name)
         } else {
