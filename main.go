@@ -141,6 +141,11 @@ func main() {
         nameQuery = fmt.Sprintf("name = '%s'", name)
         filesQueryCallResult, err := svc.Files.List().Q(nameQuery).Do()
 
+        if err != nil {
+			log.Fatalf("Unable to retrieve files: %v", err)
+			fmt.Println("Unable to retrieve files")
+		}
+
         if len(filesQueryCallResult.Files) == 0 {
             // Upload new file to google drive
             uploadNewFileToDrive(svc, filename, folderId, name)
