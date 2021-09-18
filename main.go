@@ -136,31 +136,26 @@ func main() {
 
     if updateFlag {
         fmt.Println("Updating file on drive: %s", name)
-        // Query for all files in google drive directory with name = <name>
+        // Query for all files in google drive directory with name = <name> & are not trashed
         var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s' and trashed = false", name)
-        filesQueryCallResult, err := svc.Files.List().Q(nameQuery).Do()
+        filesQueryCallResult, err := svc.Files.List().Fields("trashed").Q(nameQuery).Do()
 
         if err != nil {
 			log.Fatalf("Unable to retrieve files: %v", err)
 			fmt.Println("Unable to retrieve files")
 		}
 
-        var updatedFile bool
-        updatedFile = false
-        // Update file on google drive
-        for _, driveFile := range filesQueryCallResult.Files {
-            fmt.Printf("Attempting Updating file; %s (%s) Trashed=%t Size=%d\n", driveFile.Name, driveFile.Id, driveFile.Trashed, driveFile.Size, driveFile)
-            if driveFile.Size != 0 {
+        if len(filesQueryCallResult) == 0 {
+            fmt.Println("Uploading new file on drive: $s", name)
+            uploadNewFileToDrive(svc, filename, folderId, name)
+        } else {
+            // Update file on google drive
+            for _, driveFile := range filesQueryCallResult.Files {
+                fmt.Printf("Attempting Updating file; %s (%s) Trashed=%t Size=%d\n", driveFile.Name, driveFile.Id, driveFile.Trashed, driveFile.Size, driveFile)
                 fmt.Printf("Will update file: %s (%s)", driveFile.Name, driveFile.Id)
                 updateFileOnDrive(svc, filename, folderId, driveFile, name)
-                updatedFile = true
             }
-        }
-        if !updatedFile {
-            fmt.Println("Uploading new file on drive: $s", name)
-            // Upload new file to google drive
-            uploadNewFileToDrive(svc, filename, folderId, name)
         }
     } else {
         fmt.Println("Uploading new file on drive: $s", name)
