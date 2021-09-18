@@ -27,7 +27,7 @@ const (
     update = "false"
 )
 
-func uploadNewFileToDrive(svc *drive.Service, filename string, folderId string, name: string) {
+func uploadNewFileToDrive(svc *drive.Service, filename string, folderId string, name string) {
     file, err := os.Open(filename)
     if err != nil {
         githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
@@ -46,7 +46,7 @@ func uploadNewFileToDrive(svc *drive.Service, filename string, folderId string, 
     }
 }
 
-func updateFileOnDrive(svc *drive.Service, filename string, folderId string, driveFile *drive.File, name: string) {
+func updateFileOnDrive(svc *drive.Service, filename string, folderId string, driveFile *drive.File, name string) {
     file, err := os.Open(filename)
     if err != nil {
         githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
