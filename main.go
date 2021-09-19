@@ -150,13 +150,12 @@ func main() {
             fmt.Println("Uploading new file on drive: $s", name)
             uploadNewFileToDrive(svc, filename, folderId, name)
         } else {
-            // Update file on google drive
+            // Update files on google drive
             for _, driveFile := range filesQueryCallResult.Files {
-                // TEMP delete each one
                 svc.Files.Delete(driveFile.Id).Do()
                 fmt.Printf("Attempting Updating file; %s (%s) Trashed=%t Size=%d\n", driveFile.Name, driveFile.Id, driveFile.Trashed, driveFile.Size, driveFile)
                 fmt.Printf("Will update file: %s (%s)", driveFile.Name, driveFile.Id)
-                //updateFileOnDrive(svc, filename, folderId, driveFile, name)
+                updateFileOnDrive(svc, filename, folderId, driveFile, name)
             }
         }
     } else {
