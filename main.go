@@ -135,7 +135,7 @@ func main() {
 	}
 
     if updateFlag {
-        githubactions.Debugf(fmt.Sprintf("Updating file on drive: %s", name))
+        fmt.Printf("Updating file on drive: %s", name)
         // Query for all files in google drive directory with name = <name> & are not trashed
         var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s' and trashed = false", name)
