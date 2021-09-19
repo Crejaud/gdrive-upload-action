@@ -135,7 +135,7 @@ func main() {
 	}
 
     if updateFlag {
-        fmt.Printf("Updating file on drive: %s", name)
+        fmt.Printf("Updating file on drive: %s\n", name)
         // Query for all files in google drive directory with name = <name> & are not trashed
         var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s' and trashed = false", name)
@@ -143,25 +143,22 @@ func main() {
 
         if err != nil {
             githubactions.Fatalf(fmt.Sprintf("Unable to retrieve files: %v", err))
-			log.Fatalf("Unable to retrieve files: %v", err)
-            githubactions.Debugf(fmt.Sprintf("Updating file on drive: %s", name))
-			fmt.Println("Unable to retrieve files")
 		}
 
         if len(filesQueryCallResult.Files) == 0 {
-            githubactions.Debugf(fmt.Sprintf("Uploading new file on drive: %s", name))
+            fmt.Printf("Uploading new file on drive: %s\n", name)
             uploadNewFileToDrive(svc, filename, folderId, name)
         } else {
             // Update files on google drive
             for _, driveFile := range filesQueryCallResult.Files {
                 // TMP: In case need to delete the files to start fresh
                 // svc.Files.Delete(driveFile.Id).Do()
-                githubactions.Debugf(fmt.Sprintf("Will update file: %s (%s)", driveFile.Name, driveFile.Id))
+                fmt.Printf("Will update file: %s (%s)\n", driveFile.Name, driveFile.Id)
                 updateFileOnDrive(svc, filename, folderId, driveFile, name)
             }
         }
     } else {
-        githubactions.Debugf(fmt.Sprintf("Uploading new file on drive: %s", name))
+        fmt.Printf("Uploading new file on drive: %s\n", name)
         uploadNewFileToDrive(svc, filename, folderId, name)
     }
 
