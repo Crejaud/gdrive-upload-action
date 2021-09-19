@@ -135,31 +135,33 @@ func main() {
 	}
 
     if updateFlag {
-        fmt.Println("Updating file on drive: %s", name)
+        githubactions.Debugf(fmt.Sprintf("Updating file on drive: %s", name))
         // Query for all files in google drive directory with name = <name> & are not trashed
         var nameQuery string
         nameQuery = fmt.Sprintf("name = '%s' and trashed = false", name)
         filesQueryCallResult, err := svc.Files.List().Fields("files(name, id, trashed, size)").Q(nameQuery).Do()
 
         if err != nil {
+            githubactions.Fatalf(fmt.Sprintf("Unable to retrieve files: %v", err))
 			log.Fatalf("Unable to retrieve files: %v", err)
+            githubactions.Debugf(fmt.Sprintf("Updating file on drive: %s", name))
 			fmt.Println("Unable to retrieve files")
 		}
 
         if len(filesQueryCallResult.Files) == 0 {
-            fmt.Println("Uploading new file on drive: $s", name)
+            githubactions.Debugf(fmt.Sprintf("Uploading new file on drive: %s", name))
             uploadNewFileToDrive(svc, filename, folderId, name)
         } else {
             // Update files on google drive
             for _, driveFile := range filesQueryCallResult.Files {
-                svc.Files.Delete(driveFile.Id).Do()
-                fmt.Printf("Attempting Updating file; %s (%s) Trashed=%t Size=%d\n", driveFile.Name, driveFile.Id, driveFile.Trashed, driveFile.Size, driveFile)
-                fmt.Printf("Will update file: %s (%s)", driveFile.Name, driveFile.Id)
+                // TMP: In case need to delete the files to start fresh
+                // svc.Files.Delete(driveFile.Id).Do()
+                githubactions.Debugf(fmt.Sprintf("Will update file: %s (%s)", driveFile.Name, driveFile.Id))
                 updateFileOnDrive(svc, filename, folderId, driveFile, name)
             }
         }
     } else {
-        fmt.Println("Uploading new file on drive: $s", name)
+        githubactions.Debugf(fmt.Sprintf("Uploading new file on drive: %s", name))
         uploadNewFileToDrive(svc, filename, folderId, name)
     }
 
